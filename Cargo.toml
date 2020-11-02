@@ -6,8 +6,8 @@ edition = "2018"
 license = "Apache-2.0"
 description = "provides embedded files by warp"
 readme = "README.md"
-homepage = "https://github.com/informationsea/websockify-rs"
-repository = "https://github.com/informationsea/websockify-rs"
+homepage = "https://github.com/informationsea/warp-embed"
+repository = "https://github.com/informationsea/warp-embed"
 keywords = ["embedded-file", "warp"]
 categories = ["web-programming::http-server"]
 
