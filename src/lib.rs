@@ -109,9 +109,11 @@ pub fn embed_with_config<A: rust_embed::RustEmbed>(
         .and(warp::path::full())
         .and_then(
             |config: Arc<EmbedConfig>, tail: Tail, full: FullPath| async move {
+                //eprintln!("directory index: {:?} {:?}", tail, full);
                 for one in config.directory_index.iter() {
-                    if let Some(x) = A::get(&append_filename(tail.as_str(), one)) {
-                        if full.as_str().ends_with('/') {
+                    if full.as_str().ends_with('/') {
+                        let filepath = format!("{}{}", tail.as_str(), one);
+                        if let Some(x) = A::get(&filepath) {
                             return Ok(create_reply(x, one));
                         }
                     }
