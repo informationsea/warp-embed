@@ -154,7 +154,7 @@ pub fn embed_with_config<A: rust_embed::RustEmbed>(
 }
 
 fn create_reply(data: Cow<'static, [u8]>, actual_name: &str) -> impl Reply {
-    let suggest = mime_guess::guess_mime_type(actual_name);
+    let suggest = mime_guess::from_path(actual_name).first_or_octet_stream();
     warp::reply::with_header(EmbedFile { data }, "Content-Type", suggest.to_string())
 }
 
