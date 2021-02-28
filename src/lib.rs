@@ -2,7 +2,7 @@
 //!
 //! Serve [embedded file](https://crates.io/crates/rust-embed) with [warp](https://crates.io/crates/warp)
 //!
-//! ```
+//! ```ignore
 //! use warp::Filter;
 //! use rust_embed::RustEmbed;
 //!
