@@ -15,6 +15,7 @@
 
 use std::borrow::Cow;
 use std::sync::Arc;
+use rust_embed::EmbeddedFile;
 use warp::filters::path::{FullPath, Tail};
 use warp::http::Uri;
 use warp::{reject::Rejection, reply::Reply, reply::Response, Filter};
@@ -78,6 +79,7 @@ pub fn embed<A: rust_embed::RustEmbed>(
     embed_with_config(x, EmbedConfig::default())
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 struct NotFound {
     config: Arc<EmbedConfig>,
@@ -153,9 +155,9 @@ pub fn embed_with_config<A: rust_embed::RustEmbed>(
         .or(redirect)
 }
 
-fn create_reply(data: Cow<'static, [u8]>, actual_name: &str) -> impl Reply {
+fn create_reply(file: EmbeddedFile, actual_name: &str) -> impl Reply {
     let suggest = mime_guess::from_path(actual_name).first_or_octet_stream();
-    warp::reply::with_header(EmbedFile { data }, "Content-Type", suggest.to_string())
+    warp::reply::with_header(EmbedFile { data: file.data }, "Content-Type", suggest.to_string())
 }
 
 #[cfg(test)]
