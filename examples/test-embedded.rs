@@ -1,4 +1,4 @@
-use clap::{crate_authors, crate_version, App, Arg};
+use clap::*;
 use log::info;
 use rust_embed::RustEmbed;
 use std::env;
@@ -11,33 +11,31 @@ struct Data;
 
 #[tokio::main]
 async fn main() {
-    let matches = App::new("Embedded test")
+    let matches = Command::new("Embedded test")
         .version(crate_version!())
-        .author(crate_authors!())
+        .author(crate_authors!("\n"))
         .about("warp-embed test server")
         .arg(
-            Arg::with_name("listen")
+            Arg::new("listen")
                 .index(1)
                 .help("Listen host:port")
-                .takes_value(true)
-                .required(true),
+                .default_value("127.0.0.1:8080"),
         )
         .arg(
-            Arg::with_name("prefix")
-                .short("p")
+            Arg::new("prefix")
+                .short('p')
                 .long("prefix")
-                .takes_value(true)
                 .help("server prefix"),
         )
         .arg(
-            Arg::with_name("verbose")
-                .short("v")
+            Arg::new("verbose")
                 .long("verbose")
-                .multiple(true),
+                .short('v')
+                .action(clap::ArgAction::Count),
         )
         .get_matches();
 
-    match matches.occurrences_of("verbose") {
+    match matches.get_count("verbose") {
         1 => env::set_var("RUST_LOG", "info"),
         2 => env::set_var("RUST_LOG", "debug"),
         3 => env::set_var("RUST_LOG", "trace"),
@@ -53,14 +51,14 @@ async fn main() {
 
     let server = static_file.with(warp::log("http"));
 
-    let server = if let Some(x) = matches.value_of("prefix") {
+    let server = if let Some(x) = matches.get_one::<String>("prefix") {
         warp::path(x.to_string()).and(server).boxed()
     } else {
         server.boxed()
     };
 
     let listen = matches
-        .value_of("listen")
+        .get_one::<String>("listen")
         .unwrap()
         .to_socket_addrs()
         .unwrap();
